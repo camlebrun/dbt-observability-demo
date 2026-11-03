@@ -1,0 +1,35 @@
+name: dbt_observability_demo
+version: "1.0.0"
+profile: dbt_observability_demo
+model-paths: [models]
+seed-paths: [seeds]
+test-paths: [tests]
+macro-paths: [macros]
+
+models:
+  dbt_observability_demo:
+    00_observability:
+      # Le défaut doit être identique à `vars.observability_dataset` ci-dessous : avec
+      # dbt 2.0.9, `var()` dans cette expression ne lit pas les `vars` du projet et
+      # retombe sur ce défaut (seules les `--vars` en ligne de commande sont vues).
+      +schema: "{{ var('observability_dataset', 'obs_demo') }}"
+
+vars:
+  # Rétention (jours) des lignes de dbt_results et schema_history.
+  observability_retention_days: 90
+  # Noms du dataset et des tables du journal, lus aussi par log_dbt_results et
+  # log_schema_history : à changer ensemble. Le dataset s'appelle `obs_demo` ici,
+  # et non `observability`, pour qu'un build sur un projet réel n'écrase jamais
+  # un vrai journal.
+  observability_dataset: obs_demo
+  observability_dbt_results_table: dbt_results
+  observability_schema_history_table: schema_history
+  # Type des horodatages de chargement : `timestamptz` sur DuckDB, `timestamp` sur BigQuery
+  # (passer --vars '{ts_type: timestamp}' sur BigQuery).
+  ts_type: timestamptz
+  # Type décimal du contrat de schéma : `double` sur DuckDB, `float64` sur BigQuery.
+  double_type: double
+
+on-run-end:
+  - "{{ log_dbt_results(results) }}"
+  - "{{ log_schema_history(results) }}"

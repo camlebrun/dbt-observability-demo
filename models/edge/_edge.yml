@@ -1,0 +1,26 @@
+models:
+  - name: edge_constant
+    data_tests:
+      - volume_anomaly:
+          arguments: {date_column: order_date, value_column: n_orders, max_sigma: 3}
+          config: {meta: {expect: pass}}
+  - name: edge_constant_plus_one
+    data_tests:
+      - volume_anomaly:
+          arguments: {date_column: order_date, value_column: n_orders, max_sigma: 3}
+          config: {meta: {expect: fail}}
+  - name: edge_empty
+    data_tests:
+      - volume_anomaly:
+          arguments: {date_column: order_date, value_column: n_orders, max_sigma: 3}
+          config: {meta: {expect: fail}}
+  - name: edge_absent_day
+    data_tests:
+      - volume_anomaly:
+          arguments: {date_column: order_date, value_column: n_orders, max_sigma: 3}
+          config: {meta: {expect: fail}}
+  - name: edge_short_history
+    data_tests:
+      - volume_anomaly:
+          arguments: {date_column: order_date, value_column: n_orders, max_sigma: 3}
+          config: {meta: {expect: fail}}

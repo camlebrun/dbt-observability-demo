@@ -1,0 +1,40 @@
+models:
+  - name: fct_orders
+    config:
+      contract: {enforced: true}
+    columns:
+      - name: order_id
+        data_type: bigint
+        data_tests:
+          - unique:
+              config: {severity: warn, store_failures: true, meta: {expect: warn}}
+          - not_null:
+              config: {meta: {expect: pass}}
+      - name: customer_id
+        data_type: bigint
+        data_tests:
+          - not_null:
+              config: {meta: {expect: pass}}
+          - relationships:
+              arguments: {to: ref('stg_customers'), field: customer_id}
+              config: {meta: {expect: fail}}
+      - name: amount
+        data_type: "{{ var('double_type') }}"
+        data_tests:
+          - null_rate_below:
+              arguments: {max_rate: 0.01}
+              config: {meta: {expect: pass}}
+          - values_between:
+              arguments: {min_value: 0, max_value: 1000}
+              config: {meta: {expect: fail}}   # le montant négatif injecté sort des bornes
+      - name: ordered_at
+        data_type: timestamp
+
+  - name: orders_daily
+    data_tests:
+      - volume_anomaly:
+          arguments: {date_column: order_date, value_column: n_orders, max_sigma: 3}
+          config: {meta: {expect: fail}}
+
+  - name: fct_orders_inc
+    description: Incrémental, pour observer rows_affected sur un merge et on_schema_change.

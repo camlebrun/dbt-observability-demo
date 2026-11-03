@@ -1,0 +1,15 @@
+dbt_observability_demo:
+  target: duckdb
+  outputs:
+    duckdb:
+      type: duckdb
+      path: obs.duckdb
+      schema: main
+      threads: 1
+    bigquery:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT') }}"
+      dataset: obs_test
+      location: EU
+      threads: 1

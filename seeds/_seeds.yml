@@ -1,0 +1,6 @@
+seeds:
+  - name: raw_orders
+    config:
+      column_types:
+        ordered_at: timestamp
+        _etl_loaded_at: "{{ var('ts_type') }}"

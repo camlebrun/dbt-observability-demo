@@ -1,0 +1,14 @@
+unit_tests:
+  - name: orders_daily_agrege_par_jour
+    description: Deux commandes un jour, une le lendemain.
+    model: orders_daily
+    given:
+      - input: ref('stg_orders')
+        rows:
+          - {order_id: 1, customer_id: 1, amount: 10.0, ordered_at: "2026-01-01 10:00:00", _etl_loaded_at: "2026-01-01 11:00:00"}
+          - {order_id: 2, customer_id: 2, amount: 20.0, ordered_at: "2026-01-01 12:00:00", _etl_loaded_at: "2026-01-01 13:00:00"}
+          - {order_id: 3, customer_id: 1, amount: 5.0, ordered_at: "2026-01-02 09:00:00", _etl_loaded_at: "2026-01-02 10:00:00"}
+    expect:
+      rows:
+        - {order_date: "2026-01-01", n_orders: 2, revenue: 30.0}
+        - {order_date: "2026-01-02", n_orders: 1, revenue: 5.0}

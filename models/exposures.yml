@@ -1,0 +1,9 @@
+exposures:
+  - name: tableau_de_bord_ventes
+    type: dashboard
+    maturity: high
+    description: Le tableau de bord que consulte la direction chaque lundi.
+    owner: {name: Equipe donnees, email: donnees@example.com}
+    depends_on:
+      - ref('orders_daily')
+      - ref('fct_orders')

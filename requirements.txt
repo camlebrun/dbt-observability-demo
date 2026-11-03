@@ -1,0 +1,5 @@
+# dbt-core 1.12.6 : version de COMPARAISON (rows_affected), pas celle des résultats de l'article.
+# Les résultats viennent de dbt 2.0.9 (binaire natif) : voir le README, section Prérequis.
+dbt-core==1.12.6
+dbt-duckdb==1.11.1
+dbt-bigquery==1.12.1

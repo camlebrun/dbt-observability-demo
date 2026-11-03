@@ -1,0 +1,18 @@
+sources:
+  - name: shop
+    schema: "{{ target.schema }}"
+    config:
+      loaded_at_field: _etl_loaded_at
+      freshness:
+        warn_after: {count: 12, period: hour}
+        error_after: {count: 24, period: hour}
+    tables:
+      - name: raw_orders
+        # Surveille l'amont : échoue si une colonne apparaît, disparaît ou change de nom.
+        data_tests:
+          - columns_match:
+              arguments: {expected: [order_id, customer_id, amount, ordered_at, _etl_loaded_at]}
+              config: {meta: {expect: pass}}
+      - name: raw_customers
+        config:
+          freshness: null

@@ -1,0 +1,11 @@
+models:
+  - name: stg_orders
+    columns:
+      - name: _etl_loaded_at
+        data_tests:
+          - no_future_timestamps:
+              config: {meta: {expect: pass}}
+      - name: ordered_at
+        data_tests:
+          - no_future_timestamps:
+              config: {meta: {expect: pass}}
