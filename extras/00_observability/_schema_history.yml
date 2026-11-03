@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: schema_history
+    description: SCD2 history of each model's live column list. See the
+      model's own header comment for the full mechanism.
+    data_tests:
+      # Coverage for dbt_results' test_package capture (see the source
+      # project's other dbt_utils generic tests for the rest of the
+      # stress test) -- valid_from/
+      # valid_to per (unique_id, column_name) is exactly what this test
+      # exists for, unlike the mostly-trivial self-comparisons used
+      # elsewhere for this same purpose.
+      # upper_bound_column is COALESCE'd to a far-future sentinel, not the
+      # bare column: valid_to is NULL while a row is current (the normal
+      # SCD2 contract here), and `lower_bound < NULL` evaluates to NULL,
+      # which this test's own coalesce(..., false) turns into an
+      # automatic failure for every currently-open row. Plain string
+      # comparison (not a TIMESTAMP cast) since valid_from/valid_to are
+      # stored as ISO8601 strings -- portable across Trino and BigQuery
+      # with no adapter-specific date function, same reasoning as
+      # observability_retention_cutoff().
+      - dbt_utils.mutually_exclusive_ranges:
+          arguments:
+            lower_bound_column: valid_from
+            upper_bound_column: "coalesce(valid_to, '9999-12-31T23:59:59.999999Z')"
+            partition_by: "unique_id || '.' || column_name"
+            gaps: allowed

@@ -1,0 +1,34 @@
+# Tests optionnels qui utilisent dbt_utils et dbt_expectations.
+# NON EXÉCUTÉS à ce jour (installation des packages impossible dans l'environnement de l'auteur) :
+# leurs statuts attendus (`meta.expect`) ne sont pas validés. À greffer à la main :
+#   1. copier extras/packages.yml.example vers packages.yml, puis `dbt deps` ;
+#   2. ajouter les blocs ci-dessous aux fichiers indiqués ;
+#   3. relancer `dbt build` puis `python scripts/check_expectations.py`.
+
+# --- models/staging/_sources.yml : sous `tables: - name: raw_orders`
+#       data_tests:
+#         - dbt_expectations.expect_table_columns_to_match_set:
+#             arguments:
+#               column_list: [order_id, customer_id, amount, ordered_at, _etl_loaded_at]
+#             config: {meta: {expect: pass}}      # échoue si une colonne apparaît ou disparaît en amont
+
+# --- models/staging/_staging.yml
+models:
+  - name: stg_orders
+    data_tests:
+      - dbt_utils.recency:
+          arguments: {datepart: hour, field: _etl_loaded_at, interval: 24}
+          config: {meta: {expect: pass}}
+
+# --- models/marts/_marts.yml : sous `- name: fct_orders`
+#     data_tests:
+#       - dbt_utils.equal_rowcount:
+#           arguments: {compare_model: ref('stg_orders')}
+#           config: {meta: {expect: pass}}
+#       - dbt_expectations.expect_table_row_count_to_be_between:
+#           arguments: {min_value: 1000}
+#           config: {meta: {expect: pass}}
+#     et sous la colonne `amount` :
+#       - dbt_expectations.expect_column_values_to_be_between:
+#           arguments: {min_value: 0, max_value: 1000}
+#           config: {meta: {expect: fail}}        # attendu : échoue (montant négatif injecté)
