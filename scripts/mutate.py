@@ -15,7 +15,10 @@ import duckdb
 
 DBT = os.environ.get("DBT", "dbt")
 ENV = {**os.environ, "DBT_PROFILES_DIR": "."}
-TODAY = "cast(ordered_at as date) = current_date"
+# --day-offset N : altère le jour J-N au lieu du jour courant. Les tests de volume qui n'évaluent que les
+# périodes closes (dbt_expectations) ne peuvent pas voir le jour en cours : N=1 compare à armes égales.
+OFFSET = int(sys.argv[sys.argv.index("--day-offset") + 1]) if "--day-offset" in sys.argv else 0
+TODAY = f"cast(ordered_at as date) = current_date - {OFFSET}" if OFFSET else "cast(ordered_at as date) = current_date"
 
 MUTATIONS = [
     ("Aucune altération (référence)", None),
@@ -73,7 +76,8 @@ def one(label, sql, baseline=False):
         con = duckdb.connect("obs.duckdb")
         con.sql(sql)
         con.close()
-    run("build", "--exclude", "resource_type:seed", "path:models/edge", *(ADDED if baseline else []))
+    vars_ = ["--vars", json.dumps({"volume_expected_date": f"current_date - {OFFSET}"})] if OFFSET else []
+    run("build", *vars_, "--exclude", "resource_type:seed", "path:models/edge", *(ADDED if baseline else []))
     rr = json.loads(Path("target/run_results.json").read_text())["results"]
     bad, errors = [], []
     for r in rr:
@@ -100,7 +104,8 @@ def one(label, sql, baseline=False):
 if __name__ == "__main__":
     baseline = "--baseline" in sys.argv   # contrôles de départ seulement (sans les quatre ajoutés)
     out = [one(label, sql, baseline) for label, sql in MUTATIONS]
-    Path("mutations_results_baseline.json" if baseline else "mutations_results.json").write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    suffix = f"_j{OFFSET}" if OFFSET else ""
+    Path(f"mutations_results{suffix}_baseline.json" if baseline else f"mutations_results{suffix}.json").write_text(json.dumps(out, indent=2, ensure_ascii=False))
     print(f"{'Altération':62} | Ce qui réagit")
     print("-" * 120)
     undetected = 0

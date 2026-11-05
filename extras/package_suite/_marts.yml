@@ -1,0 +1,38 @@
+models:
+  - name: fct_orders
+    config:
+      contract: {enforced: true}
+    columns:
+      - name: order_id
+        data_type: bigint
+        data_tests:
+          - unique: {config: {severity: warn}}
+          - not_null
+      - name: customer_id
+        data_type: bigint
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('stg_customers'), field: customer_id}
+      - name: amount
+        data_type: "{{ var('double_type') }}"
+        data_tests:
+          - dbt_expectations.expect_column_values_to_not_be_null:
+              arguments: {mostly: 0.99}
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments: {min_value: 0, max_value: 1000}
+      - name: ordered_at
+        data_type: timestamp
+  - name: orders_daily
+    data_tests:
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          arguments: {date_col: order_date, date_part: day}
+      # test_periods: 7 car la série ne compte que 15 jours : avec 14, les premiers jours testés n'ont que
+      # deux jours d'historique (écart type < 1) et la variante « niveau » échoue sur des données saines.
+      - dbt_expectations.expect_column_values_to_be_within_n_moving_stdevs:
+          arguments: {column_name: n_orders, date_column_name: order_date, period: day, lookback_periods: 1, trend_periods: 7, test_periods: 7, sigma_threshold: 3}
+      # variante : niveau du volume (et non variation d'un jour à l'autre), sans logarithme
+      - dbt_expectations.expect_column_values_to_be_within_n_moving_stdevs:
+          arguments: {column_name: n_orders, date_column_name: order_date, period: day, lookback_periods: 1, trend_periods: 7, test_periods: 7, sigma_threshold: 3, take_diffs: false, take_logs: false}
+  - name: fct_orders_inc
+    description: Incrémental.
