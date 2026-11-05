@@ -1,0 +1,14 @@
+models:
+  - name: stg_orders
+    data_tests:
+      - dbt_utils.recency:
+          arguments: {datepart: hour, field: _etl_loaded_at, interval: 24}
+    columns:
+      - name: _etl_loaded_at
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments: {max_value: "current_timestamp"}
+      - name: ordered_at
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments: {max_value: "current_timestamp"}

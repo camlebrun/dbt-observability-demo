@@ -33,7 +33,7 @@ models:
   - name: orders_daily
     data_tests:
       - volume_anomaly:
-          arguments: {date_column: order_date, value_column: n_orders, max_sigma: 3}
+          arguments: {date_column: order_date, value_column: n_orders, max_sigma: 3, expected_date: "{{ var('volume_expected_date', 'current_date') }}"}
           config: {meta: {expect: fail}}
 
   - name: fct_orders_inc
