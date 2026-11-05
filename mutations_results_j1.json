@@ -1,0 +1,155 @@
+[
+  {
+    "mutation": "Aucune altération (référence)",
+    "tests": [],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Jour entièrement absent",
+    "tests": [
+      "volume_anomaly (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Volume du jour divisé par deux",
+    "tests": [
+      "volume_anomaly (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Volume du jour doublé (nouveaux identifiants)",
+    "tests": [
+      "volume_anomaly (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Une commande en double",
+    "tests": [
+      "unique(order_id) (warn)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Client manquant (NULL) sur 2 % des lignes",
+    "tests": [
+      "not_null(customer_id) (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Client inconnu (999) sur 2 % des lignes",
+    "tests": [
+      "relationships (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Montant négatif sur 0,5 % des lignes",
+    "tests": [
+      "orders_amount_positive (fail)",
+      "orders_amount_positive_graduated (fail)",
+      "values_between (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Montant manquant (NULL) sur 10 % des lignes",
+    "tests": [
+      "null_rate_below (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Montants multipliés par 100 (valeurs valides mais fausses)",
+    "tests": [
+      "values_between (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Clients permutés (clés valides mais fausses)",
+    "tests": [],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Toutes les dates décalées d'un jour",
+    "tests": [
+      "no_future_timestamps(ordered_at) (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Dernier chargement vieux de 30 h",
+    "tests": [
+      "freshness (Stale)"
+    ],
+    "build_errors": [],
+    "freshness": "Stale",
+    "freshness_age_s": 133202.0
+  },
+  {
+    "mutation": "Dernier chargement une heure dans le futur",
+    "tests": [
+      "no_future_timestamps(_etl_loaded_at) (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed, âge incohérent (-3599 s)",
+    "freshness_age_s": -3599.0
+  },
+  {
+    "mutation": "Colonne ajoutée en amont",
+    "tests": [
+      "columns_match(source) (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Type de colonne modifié en amont (amount -> texte)",
+    "tests": [
+      "orders_daily_agrege_par_jour (error)"
+    ],
+    "build_errors": [
+      "fct_orders"
+    ],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Colonne renommée en amont (amount -> montant)",
+    "tests": [
+      "columns_match(source) (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  }
+]
