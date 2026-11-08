@@ -1,0 +1,156 @@
+[
+  {
+    "mutation": "Aucune altération (référence)",
+    "tests": [],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Jour entièrement absent",
+    "tests": [
+      "dbt_expectations_expect_row_values_to_have_data_for_every_n_datepart_orders_daily_order_date__day (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Volume du jour divisé par deux",
+    "tests": [
+      "dbt_expectations_expect_column_values_to_be_within_n_moving_stdevs_orders_daily_n_orders__order_date__1__day__3__7__7 (fail)",
+      "dbt_expectations_expect_column_values_to_be_within_n_moving_stdevs_orders_daily_n_orders__order_date__1__day__3__False__False__7__7 (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Volume du jour doublé (nouveaux identifiants)",
+    "tests": [
+      "dbt_expectations_expect_column_values_to_be_within_n_moving_stdevs_orders_daily_n_orders__order_date__1__day__3__7__7 (fail)",
+      "dbt_expectations_expect_column_values_to_be_within_n_moving_stdevs_orders_daily_n_orders__order_date__1__day__3__False__False__7__7 (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Une commande en double",
+    "tests": [
+      "unique(order_id) (warn)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Client manquant (NULL) sur 2 % des lignes",
+    "tests": [
+      "not_null(customer_id) (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Client inconnu (999) sur 2 % des lignes",
+    "tests": [
+      "relationships (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Montant négatif sur 0,5 % des lignes",
+    "tests": [
+      "dbt_expectations_expect_column_values_to_be_between_fct_orders_amount__1000__0 (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Montant manquant (NULL) sur 10 % des lignes",
+    "tests": [
+      "dbt_expectations_expect_column_values_to_not_be_null_fct_orders_amount__0_99 (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Montants multipliés par 100 (valeurs valides mais fausses)",
+    "tests": [
+      "dbt_expectations_expect_column_values_to_be_between_fct_orders_amount__1000__0 (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Clients permutés (clés valides mais fausses)",
+    "tests": [],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Toutes les dates décalées d'un jour",
+    "tests": [
+      "dbt_expectations_expect_column_values_to_be_between_stg_orders_ordered_at__current_timestamp (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25203.0
+  },
+  {
+    "mutation": "Dernier chargement vieux de 30 h",
+    "tests": [
+      "dbt_utils_recency_stg_orders_hour___etl_loaded_at__24 (fail)",
+      "freshness (Stale)"
+    ],
+    "build_errors": [],
+    "freshness": "Stale",
+    "freshness_age_s": 133203.0
+  },
+  {
+    "mutation": "Dernier chargement une heure dans le futur",
+    "tests": [
+      "dbt_expectations_expect_column_values_to_be_between_stg_orders__etl_loaded_at__current_timestamp (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed, âge incohérent (-3598 s)",
+    "freshness_age_s": -3598.0
+  },
+  {
+    "mutation": "Colonne ajoutée en amont",
+    "tests": [
+      "dbt_expectations_source_expect_table_columns_to_match_set_shop_raw_orders_order_id__customer_id__amount__ordered_at___etl_loaded_at (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  },
+  {
+    "mutation": "Type de colonne modifié en amont (amount -> texte)",
+    "tests": [
+      "orders_daily_agrege_par_jour (error)"
+    ],
+    "build_errors": [
+      "fct_orders"
+    ],
+    "freshness": "Passed",
+    "freshness_age_s": 25204.0
+  },
+  {
+    "mutation": "Colonne renommée en amont (amount -> montant)",
+    "tests": [
+      "dbt_expectations_source_expect_table_columns_to_match_set_shop_raw_orders_order_id__customer_id__amount__ordered_at___etl_loaded_at (fail)"
+    ],
+    "build_errors": [],
+    "freshness": "Passed",
+    "freshness_age_s": 25202.0
+  }
+]

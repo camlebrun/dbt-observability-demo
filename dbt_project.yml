@@ -14,6 +14,15 @@ models:
       # retombe sur ce défaut (seules les `--vars` en ligne de commande sont vues).
       +schema: "{{ var('observability_dataset', 'obs_demo') }}"
 
+seeds:
+  dbt_observability_demo:
+    # Types explicites : sans eux, dbt-core charge ces colonnes en INTEGER et le contrat
+    # de fct_orders (bigint) échoue sur chaque build ; dbt 2 les charge déjà en BIGINT.
+    raw_orders:
+      +column_types: {order_id: bigint, customer_id: bigint}
+    raw_customers:
+      +column_types: {customer_id: bigint}
+
 vars:
   # Rétention (jours) des lignes de dbt_results et schema_history.
   observability_retention_days: 90

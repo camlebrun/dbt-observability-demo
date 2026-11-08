@@ -1,6 +1,8 @@
 DBT ?= dbt
 # `make mutations` exige aussi le module `duckdb` (pip install duckdb)
 PYTHON ?= python3
+# options de scripts/mutate.py, par exemple MUTATE_ARGS="--day-offset 1" (altère la veille)
+MUTATE_ARGS ?=
 TARGET ?= duckdb
 
 setup:            ## dépendances Python
@@ -19,11 +21,16 @@ demo: journal     ## scénario complet sur DuckDB (sans packages : aucun accès 
 .PHONY: setup journal demo
 
 mutations: journal ## matrice de mutations : quels contrôles détectent quelle altération ?
-	$(PYTHON) scripts/mutate.py
+	$(PYTHON) scripts/mutate.py $(MUTATE_ARGS)
 
 .PHONY: mutations
 
 mutations-baseline: journal ## contrôles de départ seulement (sans les quatre ajoutés)
-	$(PYTHON) scripts/mutate.py --baseline
+	$(PYTHON) scripts/mutate.py --baseline $(MUTATE_ARGS)
 
 .PHONY: mutations-baseline
+
+mutations-packages: ## matrice avec dbt_utils et dbt_expectations (réseau requis, copie jetable)
+	PYTHON="$(PYTHON)" sh scripts/matrix_packages.sh $(MUTATE_ARGS)
+
+.PHONY: mutations-packages
